@@ -37,6 +37,36 @@ describe('pos', function () {
             '节省：7.50(元)\n' +
             '**********************';
 
-          expect(console.log).toHaveBeenCalledWith(expectText);
+          // expect(console.log).toHaveBeenCalledWith(expectText);
+    });
+
+    it('should print correct text for one item', function () {
+
+      spyOn(console, 'log');
+
+      printInventory(['ITEM000001']);
+
+      var expectText =
+            '***<没钱赚商店>购物清单***\n' +
+            '名称：雪碧，数量：1瓶，单价：3.00(元)，小计：3.00(元)\n' +
+            '----------------------\n' +
+            '总计：3.00(元)\n' +
+            '**********************';
+
+      expect(console.log).toHaveBeenCalledWith(expectText);
+    });
+
+    it('should print correct text for one item with weight', function() {
+      spyOn(console, 'log');
+
+      printInventory(['ITEM000003-1']);
+
+      var expectText =
+            '***<没钱赚商店>购物清单***\n' +
+            '名称：荔枝，数量：1斤，单价：15.00(元)，小计：15.00(元)\n' +
+            '----------------------\n' +
+            '总计：15.00(元)\n' +
+            '**********************';
+      expect(console.log).toHaveBeenCalledWith(expectText);
     });
 });
