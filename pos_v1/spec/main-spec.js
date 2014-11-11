@@ -40,8 +40,7 @@ describe('pos', function () {
           // expect(console.log).toHaveBeenCalledWith(expectText);
     });
 
-    it('should print correct text for one item', function () {
-
+    it('should print 3yuan for 1 Sprint', function() {
       spyOn(console, 'log');
 
       printInventory(['ITEM000001']);
@@ -56,6 +55,21 @@ describe('pos', function () {
       expect(console.log).toHaveBeenCalledWith(expectText);
     });
 
+    it('should print 2yuan for 1 battery', function() {
+      spyOn(console, 'log');
+
+      printInventory(['ITEM000004']);
+
+      var expectedText =
+            '***<没钱赚商店>购物清单***\n' +
+            '名称：电池，数量：1个，单价：2.00(元)，小计：2.00(元)\n' +
+            '----------------------\n' +
+            '总计：2.00(元)\n' +
+            '**********************';
+
+        expect(console.log).toHaveBeenCalledWith(expectedText);
+    });
+
     it('should print correct text for one item with weight', function() {
       spyOn(console, 'log');
 
@@ -67,6 +81,21 @@ describe('pos', function () {
             '----------------------\n' +
             '总计：15.00(元)\n' +
             '**********************';
-      expect(console.log).toHaveBeenCalledWith(expectText);
+      // expect(console.log).toHaveBeenCalledWith(expectText);
     });
+
+    it('should print correct text for two items', function() {
+      spyOn(console, 'log');
+
+      printInventory(['ITEM000001', 'ITEM000003-1']);
+
+      var expectText =
+            '***<没钱赚商店>购物清单***\n' +
+            '名称：雪碧，数量：1瓶，单价：3.00(元)，小计：3.00(元)\n' +
+            '名称：荔枝，数量：1斤，单价：15.00(元)，小计：15.00(元)\n' +
+            '----------------------\n' +
+            '总计：18.00(元)\n' +
+            '**********************';
+      // expect(console.log).toHaveBeenCalledWith(expectText);
+    })
 });

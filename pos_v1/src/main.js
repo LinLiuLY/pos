@@ -1,23 +1,42 @@
 function printInventory(inputs) {
-    var outputs =
-          '***<没钱赚商店>购物清单***\n' +
-          '名称：雪碧，数量：1瓶，单价：3.00(元)，小计：3.00(元)\n' +
-          '----------------------\n' +
-          '总计：3.00(元)\n' +
-          '**********************';
+  var shopList = '***<没钱赚商店>购物清单***\n',
+      itemPrice,
+      allPrice = 0.00;
+  inputs.forEach(function(input) {
+    var product = findProduct(input);
 
-    var weightOutputs =
-          '***<没钱赚商店>购物清单***\n' +
-          '名称：荔枝，数量：1斤，单价：15.00(元)，小计：15.00(元)\n' +
-          '----------------------\n' +
-          '总计：15.00(元)\n' +
-          '**********************'
+    allPrice += product['price'];
 
-    inputs.forEach(function(input) {
-        if (input.indexOf('-') >= 0) {
-          outputs = weightOutputs;
-        }
-    });
+    itemPrice = calculateProduct(product, 1);
+  });
 
-    console.log(outputs);
+  var outputs = shopList +
+            itemPrice +
+            '----------------------\n' +
+            '总计：'+allPrice.toFixed(2)+'(元)\n' +
+            '**********************';
+  console.log(outputs);
+}
+
+function calculateProduct(item, count) {
+  var name = item['name'],
+      unit = item['unit'],
+      price = item['price'].toFixed(2),
+      allPrice = (price * count).toFixed(2);
+
+  return '名称：'+name+'，数量：'+count+unit+'，单价：'+price+'(元)，小计：'+allPrice+'(元)\n';
+}
+
+function findProduct(input) {
+  var product;
+  var allItems = loadAllItems();
+
+  allItems.forEach(function(item) {
+    if (item['barcode'] == input) {
+      product = item;
+      return;
+    }
+  });
+
+  return product;
 }
