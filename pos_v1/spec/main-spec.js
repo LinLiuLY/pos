@@ -70,32 +70,65 @@ describe('pos', function () {
         expect(console.log).toHaveBeenCalledWith(expectedText);
     });
 
-    it('should print correct text for one item with weight', function() {
+    it('should print 15yuan for 0.5 kilogram lychee', function() {
       spyOn(console, 'log');
 
-      printInventory(['ITEM000003-1']);
+      printInventory(['ITEM000003']);
 
-      var expectText =
+      var expectedText =
             '***<没钱赚商店>购物清单***\n' +
             '名称：荔枝，数量：1斤，单价：15.00(元)，小计：15.00(元)\n' +
             '----------------------\n' +
             '总计：15.00(元)\n' +
             '**********************';
-      // expect(console.log).toHaveBeenCalledWith(expectText);
+
+      expect(console.log).toHaveBeenCalledWith(expectedText);
     });
 
-    it('should print correct text for two items', function() {
+    it('should print 11yuan for 1 kilogram apple', function() {
       spyOn(console, 'log');
 
-      printInventory(['ITEM000001', 'ITEM000003-1']);
+      printInventory(['ITEM000002-2']);
 
-      var expectText =
+      var expectedText =
             '***<没钱赚商店>购物清单***\n' +
-            '名称：雪碧，数量：1瓶，单价：3.00(元)，小计：3.00(元)\n' +
-            '名称：荔枝，数量：1斤，单价：15.00(元)，小计：15.00(元)\n' +
+            '名称：苹果，数量：2斤，单价：5.50(元)，小计：11.00(元)\n' +
             '----------------------\n' +
-            '总计：18.00(元)\n' +
+            '总计：11.00(元)\n' +
             '**********************';
-      // expect(console.log).toHaveBeenCalledWith(expectText);
+
+      expect(console.log).toHaveBeenCalledWith(expectedText);
+    });
+
+    it('should print 6yuan for 2 cola', function() {
+      spyOn(console, 'log');
+
+      printInventory(['ITEM000000', 'ITEM000000']);
+
+      var expectedText =
+            '***<没钱赚商店>购物清单***\n' +
+            '名称：可口可乐，数量：2瓶，单价：3.00(元)，小计：6.00(元)\n' +
+            '----------------------\n' +
+            '总计：6.00(元)\n' +
+            '**********************';
+
+      expect(console.log).toHaveBeenCalledWith(expectedText);
+    });
+
+    it('should print 20yuan for 1 kilogram apple and 2 instant noodles', function() {
+      spyOn(console, 'log');
+
+      printInventory(['ITEM000002-2', 'ITEM000005', 'ITEM000005']);
+
+      var expectedText =
+            '***<没钱赚商店>购物清单***\n' +
+            '名称：苹果，数量：2斤，单价：5.50(元)，小计：11.00(元)\n' +
+            '名称：方便面，数量：2袋，单价：4.50(元)，小计：9.00(元)\n' +
+            '----------------------\n' +
+            '总计：20.00(元)\n' +
+            '**********************';
+
+      expect(console.log).toHaveBeenCalledWith(expectedText);
     })
+
 });

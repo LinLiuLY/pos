@@ -1,17 +1,24 @@
 function printInventory(inputs) {
   var shopList = '***<没钱赚商店>购物清单***\n',
-      itemPrice,
+      allProducts = '',
       allPrice = 0.00;
-  inputs.forEach(function(input) {
-    var product = findProduct(input);
 
-    allPrice += product['price'];
+  var groups = groupby(inputs);
 
-    itemPrice = calculateProduct(product, 1);
-  });
+  for (var key in groups) {
+    if (groups.hasOwnProperty(key)) {
+      var count = groups[key];
+      var code = key;
+      var product = findProduct(code);
+
+      allPrice += product['price'] * count;
+
+      allProducts += calculateProduct(product, count);
+    }
+  }
 
   var outputs = shopList +
-            itemPrice +
+            allProducts +
             '----------------------\n' +
             '总计：'+allPrice.toFixed(2)+'(元)\n' +
             '**********************';
@@ -39,4 +46,21 @@ function findProduct(input) {
   });
 
   return product;
+}
+
+function groupby(inputs) {
+  var groups = {};
+
+  inputs.forEach(function(input) {
+    var count = 1;
+    var code = input;
+    if(input.indexOf('-') >= 0) {
+      code = input.split('-')[0];
+      count = parseInt(input.split('-')[1]);
+    }
+    groups[code] = groups[code] || 0;
+    groups[code] += count;
+  });
+
+  return groups;
 }
