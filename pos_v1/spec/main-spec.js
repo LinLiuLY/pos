@@ -100,16 +100,16 @@ describe('pos', function () {
       expect(console.log).toHaveBeenCalledWith(expectedText);
     });
 
-    it('should print 6yuan for 2 cola', function() {
+    it('should print 4yuan for 2 battery', function() {
       spyOn(console, 'log');
 
-      printInventory(['ITEM000000', 'ITEM000000']);
+      printInventory(['ITEM000004', 'ITEM000004']);
 
       var expectedText =
             '***<没钱赚商店>购物清单***\n' +
-            '名称：可口可乐，数量：2瓶，单价：3.00(元)，小计：6.00(元)\n' +
+            '名称：电池，数量：2个，单价：2.00(元)，小计：4.00(元)\n' +
             '----------------------\n' +
-            '总计：6.00(元)\n' +
+            '总计：4.00(元)\n' +
             '**********************';
 
       expect(console.log).toHaveBeenCalledWith(expectedText);
@@ -118,17 +118,37 @@ describe('pos', function () {
     it('should print 20yuan for 1 kilogram apple and 2 instant noodles', function() {
       spyOn(console, 'log');
 
-      printInventory(['ITEM000002-2', 'ITEM000005', 'ITEM000005']);
+      printInventory(['ITEM000002-2', 'ITEM000005']);
 
       var expectedText =
             '***<没钱赚商店>购物清单***\n' +
             '名称：苹果，数量：2斤，单价：5.50(元)，小计：11.00(元)\n' +
-            '名称：方便面，数量：2袋，单价：4.50(元)，小计：9.00(元)\n' +
+            '名称：方便面，数量：1袋，单价：4.50(元)，小计：4.50(元)\n' +
             '----------------------\n' +
-            '总计：20.00(元)\n' +
+            '总计：15.50(元)\n' +
             '**********************';
 
       expect(console.log).toHaveBeenCalledWith(expectedText);
-    })
+    });
+
+    it('should print 3yuan for 2 cola with promotion', function() {
+      spyOn(console, 'log');
+
+      printInventory(['ITEM000000', 'ITEM000000']);
+
+      var expectedText =
+            '***<没钱赚商店>购物清单***\n' +
+            '名称：可口可乐，数量：2瓶，单价：3.00(元)，小计：3.00(元)\n' +
+            '----------------------\n' +
+            '挥泪赠送商品:\n' +
+            '名称：可口可乐，数量：1瓶\n' +
+            '----------------------\n' +            
+            '总计：3.00(元)\n' +            
+            '节省：3.00(元)\n' +
+            '**********************';
+
+      expect(console.log).toHaveBeenCalledWith(expectedText);
+    });
+
 
 });
