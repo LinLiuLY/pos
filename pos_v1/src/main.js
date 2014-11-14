@@ -1,64 +1,68 @@
+var START = '***<没钱赚商店>购物清单***\n',
+    LINE = '----------------------\n',
+    END = '**********************';
+
 function printInventory(inputs) {
-  var shopList = '***<没钱赚商店>购物清单***\n',
-      allProducts = '',
+  var allItems = '',
       allPromotions = '',
       realPrice = 0,
       totalPrice = 0;
 
-  var line = '';
+  var itemGroups = groupby(inputs);
 
-  var groups = groupby(inputs);
+  for (var barcode in itemGroups) {
+    if (itemGroups.hasOwnProperty(barcode)) {
+      var count = itemGroups[barcode];
+      var item = findProduct(barcode);
 
-  for (var key in groups) {
-    if (groups.hasOwnProperty(key)) {
-      var count = groups[key];
-      var code = key;
-      var product = findProduct(code);
+      realPrice += calculatePrice(item['price'], count, barcode);
 
-      realPrice += calculatePrice(product['price'], count, code);
+      totalPrice += item['price'] * count;
 
-      totalPrice += product['price'] * count;
+      allItems += printItem(item, count, calculatePrice(item['price'], count, item['barcode']));
 
-      allProducts += calculateProduct(product, count);
-
-      allPromotions += calculatePromotion(count, product);
+      allPromotions += calculatePromotion(count, item);
     }
   }
-  var promotionInfo = '';
-  var saveInfo = '';
-  if (allPromotions != '') {
-    promotionInfo = '挥泪赠送商品:\n' +
-    allPromotions +
-    '----------------------\n';
 
-    saveInfo = '节省：'+(totalPrice-realPrice).toFixed(2)+'(元)\n';
-  }
-
-  var outputs = shopList +
-            allProducts +
-            '----------------------\n' +
-            promotionInfo +
-            '总计：'+realPrice.toFixed(2)+'(元)\n' +
-            saveInfo +
-            '**********************';
+  var outputs = printAllItems(allItems) +
+            printPromotion(allPromotions) +
+            printTotal(realPrice) +
+            printSaved(totalPrice-realPrice) + END
+            ;
   console.log(outputs);
 }
 
-function calculateProduct(item, count) {
-  var name = item['name'],
-      unit = item['unit'],
-      price = item['price'].toFixed(2);
-  var allPrice = calculatePrice(price, count, item['barcode']);
-  return '名称：'+name+'，数量：'+count+unit+'，单价：'+price+'(元)，小计：'+allPrice.toFixed(2)+'(元)\n';
+function printAllItems(allItems) {
+  return START + allItems + LINE;
+}
+
+function printItem(item, count, prices) {
+  return '名称：' + item['name'] +
+      '，数量：' + count + item['unit'] +
+      '，单价：' + item['price'].toFixed(2) + '(元)' +
+      '，小计：' + prices.toFixed(2) + '(元)\n';
+}
+
+function printPromotion(promotions) {
+  return !promotions ? '' : '挥泪赠送商品:\n' + promotions + LINE;
+}
+
+function printSaved(saved) {
+  return saved > 0 ? '节省：'+saved.toFixed(2)+'(元)\n' : '';
+}
+
+function printTotal(realPrice) {
+  return '总计：'+realPrice.toFixed(2)+'(元)\n';
 }
 
 function calculatePromotion(count, item) {
-  if(hasPromotion(count, item['barcode'])) {
-    var promoteCount = count - Math.ceil(count/2);
-    return '名称：'+item['name']+'，数量：'+promoteCount+item['unit']+'\n';
+  if(!hasPromotion(count, item['barcode'])) {
+    return '';
   }
-  
-  return '';
+
+  return '名称：' + item['name'] + 
+        '，数量：' + (count - Math.ceil(count/2)) + item['unit'] + '\n';
 }
 
 function calculatePrice(price, count, barcode) {
@@ -72,25 +76,11 @@ function calculatePrice(price, count, barcode) {
 }
 
 function hasPromotion(count, barcode) {
-  return count >= 2 && getPromotionProduct().indexOf(barcode) > -1;
-}
-
-function findProduct(input) {
-  var product;
-  var allItems = loadAllItems();
-
-  allItems.forEach(function(item) {
-    if (item['barcode'] == input) {
-      product = item;
-      return;
-    }
-  });
-
-  return product;
+  return count >= 2 && promotionBarcodes().indexOf(barcode) > -1;
 }
 
 function groupby(inputs) {
-  var groups = {};
+  var itemGroups = {};
 
   inputs.forEach(function(input) {
     var count = 1;
@@ -99,21 +89,33 @@ function groupby(inputs) {
       code = input.split('-')[0];
       count = parseInt(input.split('-')[1]);
     }
-    groups[code] = groups[code] || 0;
-    groups[code] += count;
+    itemGroups[code] = itemGroups[code] || 0;
+    itemGroups[code] += count;
   });
 
-  return groups;
+  return itemGroups;
 }
 
-function getPromotionProduct() {
-  var promotionProduct = [];
+function findProduct(input) {
+  var product;
 
-  loadPromotions().forEach (function(promotion) {
+  loadAllItems().some(function(item) {
+    product = item;
+
+    return item['barcode'] == input;
+  });
+
+  return product;
+}
+
+function promotionBarcodes() {
+  var promotionBarcodes = [];
+
+  loadPromotions().forEach(function(promotion) {
     if(promotion['type'] === 'BUY_TWO_GET_ONE_FREE'){
-      promotionProduct = promotion['barcodes'];
+      promotionBarcodes = promotion['barcodes'];
     }
   })
 
-  return promotionProduct;
+  return promotionBarcodes;
 }
